@@ -1,1 +1,7 @@
-# Assignment4.4
+ Explain the importance and usage of the below terms in details
+● DFSInputStream
+● DFSOutputStream
+● FSDataInputStream
+● FSDataOutputStream
+DistributedFileSystem return an FSDataInputStream to the client for it to read data from. FSDataInputStream in turns wraps the DFSInputStream which manages the datanode and namenode I/O. Client calls read() on the stream. DFSInputStream which has stored the datanode addresses then connects to the closest datanode for the first block in the file. Data is streamed from the datanode back to the client, which calls read() repeatedly on the stream. When the end of the block is reached DFSInputStream will close the connection to the datanode and then finds the best datanode for the next block. If the DFSInputStream encounters an error while communicating with a datanode, it will try the next closest one for that block. It will also remember datanodes that have failed so that it doesn’t needlessly retry them for later blocks. The DFSInputStream also verifies checksums for the data transferred to it from the datanode. If a corrupted block is found, it is reported to the namenode before the DFSInputStream attempts to read a replica of the block from another datanode.
+DistributedFileSystem makes an RPC call to the namenode to create a new file in the filesystem namespace, with no blocks associated with it The namenode performs some checks if checks pass, the namenode makes a record of the new file. The DistributedFileSystem returns an FSDataOutputStream for the client to start writing data to. Just as in the read case, FSDataOutputStream wraps a DFSOutputStream, which handles communication with the datanodes and namenode.
